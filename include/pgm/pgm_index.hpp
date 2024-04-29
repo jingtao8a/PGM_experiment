@@ -65,6 +65,8 @@ struct ApproxPos {
  */
 template<typename K, size_t Epsilon = 64, size_t EpsilonRecursive = 4, typename Floating = float>
 class PGMIndex {
+public:
+    std::vector<std::vector<K>> getMatrix();
 protected:
     template<typename, size_t, size_t, uint8_t, typename>
     friend class BucketingPGMIndex;
@@ -260,6 +262,28 @@ struct PGMIndex<K, Epsilon, EpsilonRecursive, Floating>::Segment {
         return pos + intercept;
     }
 };
+
+template<typename K, size_t Epsilon, size_t EpsilonRecursive, typename Floating>
+std::vector<std::vector<K>> PGMIndex<K, Epsilon, EpsilonRecursive, Floating>::getMatrix() {
+    std::vector<std::vector<K>> res;
+    int level = levels_offsets.size() - 1;
+    int startIndexOfSegments = 0;
+    //diff
+    for (int i = level; i > 1; --i) {
+        levels_offsets[i] = levels_offsets[i] - levels_offsets[i - 1];
+    }
+    for (int i = 1; i <= level; ++i) {
+        int size = levels_offsets[i];
+        std::vector<K> array;
+        for (int j = 0; j < size; ++j) {
+            array.push_back(segments[startIndexOfSegments + j].key);
+        }
+        startIndexOfSegments += size;
+        res.push_back(array);
+    }
+    res.back().pop_back();
+    return res;
+}
 
 #pragma pack(pop)
 
