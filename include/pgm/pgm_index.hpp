@@ -279,9 +279,9 @@ std::vector<std::vector<K>> PGMIndex<K, Epsilon, EpsilonRecursive, Floating>::ge
             array.push_back(segments[startIndexOfSegments + j].key);
         }
         startIndexOfSegments += size;
+        array.pop_back();
         res.push_back(array);
     }
-    res.back().pop_back();
     return res;
 }
 
