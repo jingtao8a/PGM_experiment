@@ -25,21 +25,20 @@ int main() {
 
     // Query the PGM-index
     auto q = 42;
-    auto range = index.search(q);
-    auto lo = data.begin() + range.lo;
-    auto hi = data.begin() + range.hi;
-    std::cout << *std::lower_bound(lo, hi, q);
+//    auto range = index.search(q);
+    std::cout << index.segment_index_for_key(q) << std::endl;
+    q = 13092309;
+    std::cout << index.segment_index_for_key(q) << std::endl;
+//    auto lo = data.begin() + range.lo;
+//    auto hi = data.begin() + range.hi;
+//    std::cout << *std::lower_bound(lo, hi, q);
+//
+//    std::cout << std::endl;
 
-    std::cout << std::endl;
-
-    std::vector<std::vector<int> > matrix =  index.getMatrix();
-
-    for (std::vector<int>& vec : matrix) {
-        std::cout << "size :" <<  vec.size() << std::endl;
-//        for (int i : vec) {
-//            std::cout << i << " ";
-//        }
-        std::cout << std::endl;
+    auto matrix = index.getMatrix();
+    for (auto& vec : matrix) {
+        std::cout << vec.size() << std::endl;
     }
+    std::cout << std::endl;
     return 0;
 }

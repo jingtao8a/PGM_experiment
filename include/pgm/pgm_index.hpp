@@ -157,7 +157,33 @@ protected:
         }
         return it;
     }
+public:
+    //segment_index从1开始计数
+    long segment_index_for_key(const K &key) const {
+        if constexpr (EpsilonRecursive == 0) {
+            auto iter = std::upper_bound(segments.begin(), segments.begin() + segments_count(), key);
+            return std::distance(segments.begin(), iter);
+        }
 
+        auto it = segments.begin() + *(levels_offsets.end() - 2);
+        for (auto l = int(height()) - 2; l >= 0; --l) {
+            auto level_begin = segments.begin() + levels_offsets[l];
+            auto pos = std::min<size_t>((*it)(key), std::next(it)->intercept);
+            auto lo = level_begin + PGM_SUB_EPS(pos, EpsilonRecursive + 1);
+
+            static constexpr size_t linear_search_threshold = 8 * 64 / sizeof(Segment);
+            if constexpr (EpsilonRecursive <= linear_search_threshold) {
+                for (; std::next(lo)->key <= key; ++lo)
+                    continue;
+                it = lo;
+            } else {
+                auto level_size = levels_offsets[l + 1] - levels_offsets[l] - 1;
+                auto hi = level_begin + PGM_ADD_EPS(pos, EpsilonRecursive, level_size);
+                it = std::prev(std::upper_bound(lo, hi, key));
+            }
+        }
+        return std::distance(segments.begin(), std::next(it));
+    }
 public:
 
     static constexpr size_t epsilon_value = Epsilon;
