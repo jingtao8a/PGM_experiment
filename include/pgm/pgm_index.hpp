@@ -292,14 +292,15 @@ struct PGMIndex<K, Epsilon, EpsilonRecursive, Floating>::Segment {
 template<typename K, size_t Epsilon, size_t EpsilonRecursive, typename Floating>
 std::vector<std::vector<K>> PGMIndex<K, Epsilon, EpsilonRecursive, Floating>::getMatrix() {
     std::vector<std::vector<K>> res;
-    int level = levels_offsets.size() - 1;
+    std::vector<size_t> copy_levels_offsets(levels_offsets);
+    int level = copy_levels_offsets.size() - 1;
     int startIndexOfSegments = 0;
     //diff
     for (int i = level; i > 1; --i) {
-        levels_offsets[i] = levels_offsets[i] - levels_offsets[i - 1];
+        copy_levels_offsets[i] = copy_levels_offsets[i] - copy_levels_offsets[i - 1];
     }
     for (int i = 1; i <= level; ++i) {
-        int size = levels_offsets[i];
+        int size = copy_levels_offsets[i];
         std::vector<K> array;
         for (int j = 0; j < size; ++j) {
             array.push_back(segments[startIndexOfSegments + j].key);
