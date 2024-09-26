@@ -306,7 +306,7 @@ std::vector<std::vector<K>> PGMIndex<K, Epsilon, EpsilonRecursive, Floating>::ge
             array.push_back(segments[startIndexOfSegments + j].key);
         }
         startIndexOfSegments += size;
-        array.pop_back();
+        array.pop_back();//弹出sentinel
         res.push_back(array);
     }
     return res;

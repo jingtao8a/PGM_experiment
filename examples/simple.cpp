@@ -92,7 +92,7 @@ int main() {
         for (long i : vec) {
             std::cout << i << " ";
         }
-        std::cout << std::endl;
+        std::cout << "\n" << std::endl;
     }
     return 0;
 }
