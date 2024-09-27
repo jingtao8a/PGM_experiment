@@ -1,0 +1,1 @@
+add_executable(test_partition_algorithm test_partition_algorithm.cpp)
