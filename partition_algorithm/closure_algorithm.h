@@ -13,7 +13,7 @@
 
 namespace dili {
 
-    template<typename K, size_t Epsilon = 64, typename Floating = float >
+    template<typename K, size_t Epsilon = 64, typename Floating = double >
     class ClosureAlgorithm {
     private:
         static_assert(Epsilon > 0);
