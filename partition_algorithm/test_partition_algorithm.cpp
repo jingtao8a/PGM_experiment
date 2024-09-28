@@ -5,36 +5,16 @@
 #include "closure_algorithm.h"
 #include "shrinkingcone_algorithm.h"
 #include <iostream>
-#include <random>
-#include <chrono>
 #include <unordered_set>
 #include <vector>
 #include <fstream>
+#include <cstdint>
 
 #define DATA_SIZE 1000000
-#define keyType long
+#define keyType uint64_t
 
 static keyType searchKey = 20000;
 
-static void data_init(std::vector<keyType>& keys) {
-    std::random_device rd;
-    std::mt19937 engine(rd());
-//    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-
-    std::uniform_int_distribution<keyType> dist(0, DATA_SIZE * 100);
-    std::unordered_set<keyType> key_set;
-
-    auto _n = DATA_SIZE;
-    while (key_set.size() < _n) {
-        keyType key = dist(engine);
-        std::cout << key_set.size() << " ";
-        key_set.insert(key);
-    }
-    std::cout << std::endl;
-    std::copy(key_set.begin(), key_set.end(), std::back_inserter(keys));
-
-//    shuffle(keys.begin(), keys.end(), std::default_random_engine(seed));
-}
 
 template <class T>
 bool load_binary_data(T data[], int length, const std::string& file_path) {
@@ -50,17 +30,17 @@ int main() {
     keyType* keys = new keyType[DATA_SIZE];
     load_binary_data(keys, DATA_SIZE, "D:/ALEX/resources/ycsb-200M.bin.data");
     // Generate some random data
-    std::vector<long> data(keys, keys + DATA_SIZE);
+    std::vector<keyType> data(keys, keys + DATA_SIZE);
 
-    //    data_init(data);
     data.push_back(searchKey);
     std::sort(data.begin(), data.end());
     auto iter = std::lower_bound(data.begin(), data.end(), searchKey);
+    std::cout << *data.begin() << std::endl;
+    std::cout << data.back() << std::endl;
     std::cout << searchKey << " real_position is " << std::distance(data.begin(), iter) << std::endl;
-
-//    dili::ClosureAlgorithm<long> closureAlgorithm(data);
+//    dili::ClosureAlgorithm<keyType> closureAlgorithm(data);
 //    auto& segments = closureAlgorithm.getSegments();
-    dili::ShrinkingConeAlgorithm<long> shrinkingConeAlgorithm(data);
+    dili::ShrinkingConeAlgorithm<keyType> shrinkingConeAlgorithm(data);
     auto& segments = shrinkingConeAlgorithm.getSegments();
     std::cout << segments.size() << std::endl;
     for (int i = 0; i < segments.size(); ++i) {
@@ -69,5 +49,5 @@ int main() {
         std::cout << "intercept " << segments[i].intercept << " ";
         std::cout << std::endl;
     }
-    std::cout << searchKey << " predict_position is " << segments[7](searchKey) << std::endl;
+    std::cout << searchKey << " predict_position is " << segments[0](searchKey) << std::endl;
 }
